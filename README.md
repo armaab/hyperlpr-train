@@ -67,7 +67,10 @@ Cehckpoints在`checkpoints`目录下, tensorboard的log目录为`log`。
 训练需要准备训练数据集和验证数据集, 每种数据集都包括图片和标签两部分。
 
 ### 图片
-图片为包含真实车牌的图片。
+图片为包含真实车牌的图片（如下图），
+所有图片大小必须与命令行参数中指定的相同。
+
+![示例图片](imgs/plate.jpg)
 
 ### 标签
 标签为UTF-8编码的纯文本文件, 每行的格式如下
@@ -76,21 +79,5 @@ filename:label
 ```
 其中`filename`是图片名称, 不包含顶级目录<sup>[1](#myfootnote1)</sup>;
 label是真实车牌号, 英文字母需要大写.
-
-LICENSE
------
-Copyright Richard Y.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 
 <a name="myfootnote1">1</a> 顶级目录在命令行参数中以`-ti`给出
