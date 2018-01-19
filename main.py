@@ -29,7 +29,7 @@ NUM_CHARS = len(CHARS)
 # an internal Keras loss function
 def ctc_lambda_func(args):
     y_pred, labels, input_length, label_length = args
-    y_pred = y_pred[:, 0, :, :]
+    y_pred = y_pred[:, :, 0, :]
     return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
 
 def build_model(width, num_channels):
@@ -63,7 +63,7 @@ def encodeLabel(s):
 def parseLine(line):
     parts = line.split(':')
     filename = parts[0]
-    label = encodeLabel(parts[1].strip())
+    label = encodeLabel(parts[1].strip().upper())
     return filename, label
 
 class TextImageGenerator:
@@ -74,7 +74,7 @@ class TextImageGenerator:
         self._num_channels = num_channels
         self._label_len = label_len
         self._input_len = input_length
-        self._img_h, self._img_w = img_size
+        self._img_w, self._img_h = img_size
 
         self._num_examples = 0
         self._next_index = 0
@@ -117,8 +117,8 @@ class TextImageGenerator:
         for j, i in enumerate(range(start, end)):
             fname = self._filenames[i]
             img = cv2.imread(os.path.join(self._img_dir, fname))
-            # img = img.transpose([1, 0, 2])
             images[j, ...] = img
+        images = np.transpose(images, axes=[0, 2, 1, 3])
         labels = self._labels[start:end, ...]
         input_length = np.zeros([batch_size, 1])
         label_length = np.zeros([batch_size, 1])
@@ -147,13 +147,13 @@ def train(args):
         os.makedirs(args.log)
     label_len = args.label_len
 
-    input_tensor, y_pred = build_model(args.width, args.num_channels)
+    input_tensor, y_pred = build_model(args.img_size[0], args.num_channels)
 
     labels = Input(name='the_labels', shape=[label_len], dtype='float32')
-    input_length = Input(name='input_length', shape=[1], dtype='int64')
-    label_length = Input(name='label_length', shape=[1], dtype='int64')
+    input_length = Input(name='input_length', shape=[1], dtype='int32')
+    label_length = Input(name='label_length', shape=[1], dtype='int32')
 
-    pred_length = int(y_pred.shape[2])
+    pred_length = int(y_pred.shape[1])
     # Keras doesn't currently support loss funcs with extra parameters
     # so CTC loss is implemented in a lambda layer
     loss_out = Lambda(ctc_lambda_func, output_shape=(1,), name='ctc')([y_pred, labels, input_length, label_length])
