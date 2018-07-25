@@ -54,16 +54,16 @@ def build_model(width, num_channels):
     y_pred = x
     return input_tensor, y_pred
 
-def encodeLabel(s):
+def encode_label(s):
     label = np.zeros([len(s)])
     for i, c in enumerate(s):
         label[i] = CHARS_DICT[c]
     return label
 
-def parseLine(line):
+def parse_line(line):
     parts = line.split(':')
     filename = parts[0]
-    label = encodeLabel(parts[1].strip().upper())
+    label = encode_label(parts[1].strip().upper())
     return filename, label
 
 class TextImageGenerator:
@@ -88,7 +88,7 @@ class TextImageGenerator:
         self.labels = []
         with open(self._label_file) as f:
             for line in f:
-                filename, label = parseLine(line)
+                filename, label = parse_line(line)
                 self.filenames.append(filename)
                 self.labels.append(label)
                 self._num_examples += 1
