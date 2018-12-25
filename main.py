@@ -201,7 +201,7 @@ def train(args):
                         initial_epoch=args.start_epoch)
 
 def export(args):
-    """Export the model to a hdf5 file
+    """Export the model to an hdf5 file
     """
     input_tensor, y_pred = build_model(None, args.num_channels)
     model = Model(inputs=input_tensor, outputs=y_pred)
